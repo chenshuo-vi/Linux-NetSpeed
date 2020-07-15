@@ -18,6 +18,31 @@ Info="${Green_font_prefix}[信息]${Font_color_suffix}"
 Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
+askuser(){
+      while true;
+      do
+      read -r -p "是否重新运行脚本? [Y/N] " input
+      case $input in
+           [yY][eE][sS]|[yY])
+	   echo "重新运行..."
+           wget -N --no-check-certificate "https://github.000060000.xyz/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
+	   break
+	   
+		;;
+           [nN][oO]|[nN])
+	   echo "不运行退出"
+	   break
+          	;;
+
+             *)
+	    echo "输入错误"
+
+		;;
+       esac
+done
+
+}
+
 #安装BBR内核
 installbbr(){
 	kernel_version="5.6.15"
@@ -179,6 +204,7 @@ installbbr(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+	askuser
 }
 
 #安装BBRplus内核 4.14.129
@@ -225,6 +251,7 @@ installbbrplus(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+	askuser
 }
 
 #安装Lotserver内核
@@ -255,6 +282,7 @@ installlot(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+	askuser
 }
 
 #安装xanmod内核  from xanmod.org
@@ -313,6 +341,7 @@ installxanmod(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+	askuser
 }
 
 #安装bbr2内核
@@ -385,6 +414,7 @@ installbbr2(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+	askuser
 }
 
 #安装Zen内核
@@ -457,6 +487,7 @@ installzen(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+	askuser
 }
 
 #安装bbrplus 新内核
@@ -508,7 +539,7 @@ installbbrplusnew(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
-
+	askuser
 }
 
 #启用BBR+fq
