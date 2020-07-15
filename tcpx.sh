@@ -30,7 +30,7 @@ askuser(){
 	   
 		;;
            [nN][oO]|[nN])
-	   echo "不运行退出"
+	   echo "不运行退出脚本"
 	   break
           	;;
 
