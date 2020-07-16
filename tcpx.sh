@@ -11,7 +11,7 @@ export PATH
 #=================================================
 
 sh_ver="1.3.2.38"
-github="github.000060000.xyz"
+github="raw.githubusercontent.com/chenshuo-as/Linux-NetSpeed/master/"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
@@ -25,7 +25,7 @@ askuser(){
       case $input in
            [yY][eE][sS]|[yY])
 	   echo "重新运行..."
-           wget -N --no-check-certificate "https://github.000060000.xyz/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
+           wget -N --no-check-certificate "https://raw.githubusercontent.com/chenshuo-as/Linux-NetSpeed/master/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
 	   break
 	   
 		;;
