@@ -544,7 +544,6 @@ installbbrplusnew(){
 
 #启用BBR+fq
 startbbrfq(){
-	remove_all
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
@@ -553,7 +552,6 @@ startbbrfq(){
 
 #启用BBR+cake
 startbbrcake(){
-	remove_all
 	echo "net.core.default_qdisc=cake" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
@@ -562,7 +560,6 @@ startbbrcake(){
 
 #启用BBRplus
 startbbrplus(){
-	remove_all
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbrplus" >> /etc/sysctl.conf
 	sysctl -p
@@ -571,7 +568,6 @@ startbbrplus(){
 
 #启用Lotserver
 startlotserver(){
-	remove_all
 	if [[ "${release}" == "centos" ]]; then
 		yum install ethtool
 	else
@@ -589,7 +585,6 @@ maxmode=\"1\"">>/appex/etc/config
 
 #启用BBR2+FQ
 startbbr2fq(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=0" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -599,7 +594,6 @@ startbbr2fq(){
 
 #启用BBR2+CAKE
 startbbr2cake(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=0" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=cake" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -609,7 +603,6 @@ startbbr2cake(){
 
 #启用BBR2+FQ+ecn
 startbbr2fqecn(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=1" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -619,7 +612,6 @@ startbbr2fqecn(){
 
 #启用BBR2+CAKE+ecn
 startbbr2cakeecn(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=1" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=cake" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -628,55 +620,6 @@ startbbr2cakeecn(){
 }
 
 
-#卸载全部加速
-remove_all(){
-	rm -rf bbrmod
-	sed -i '/net.ipv4.tcp_retries2/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_slow_start_after_idle/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_fastopen/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_ecn/d' /etc/sysctl.conf
-	sed -i '/net.core.default_qdisc/d' /etc/sysctl.conf
-    sed -i '/net.ipv4.tcp_congestion_control/d' /etc/sysctl.conf
-    sed -i '/fs.file-max/d' /etc/sysctl.conf
-	sed -i '/net.core.rmem_max/d' /etc/sysctl.conf
-	sed -i '/net.core.wmem_max/d' /etc/sysctl.conf
-	sed -i '/net.core.rmem_default/d' /etc/sysctl.conf
-	sed -i '/net.core.wmem_default/d' /etc/sysctl.conf
-	sed -i '/net.core.netdev_max_backlog/d' /etc/sysctl.conf
-	sed -i '/net.core.somaxconn/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_syncookies/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_tw_reuse/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_tw_recycle/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_fin_timeout/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_keepalive_time/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.ip_local_port_range/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_max_syn_backlog/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_max_tw_buckets/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_rmem/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_wmem/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_mtu_probing/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.ip_forward/d' /etc/sysctl.conf
-	sed -i '/fs.inotify.max_user_instances/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_syncookies/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_fin_timeout/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_tw_reuse/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_max_syn_backlog/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.ip_local_port_range/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_max_tw_buckets/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.route.gc_timeout/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_synack_retries/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_syn_retries/d' /etc/sysctl.conf
-	sed -i '/net.core.somaxconn/d' /etc/sysctl.conf
-	sed -i '/net.core.netdev_max_backlog/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_timestamps/d' /etc/sysctl.conf
-	sed -i '/net.ipv4.tcp_max_orphans/d' /etc/sysctl.conf
-	if [[ -e /appex/bin/lotServer.sh ]]; then
-		bash <(wget -qO- https://git.io/lotServerInstall.sh) uninstall
-	fi
-	clear
-	echo -e "${Info}:清除加速完成。"
-	sleep 1s
-}
 
 #优化系统配置
 optimizing_system(){
