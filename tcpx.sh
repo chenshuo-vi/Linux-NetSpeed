@@ -292,7 +292,13 @@ installlot(){
 	#	reboot
 	#fi
 	echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
-	askuser
+        sleep 1
+        read -p "需要重启VPS，是否现在重启 ? [Y/n] :" yn
+          [ -z "${yn}" ] && yn="y"
+             if [[ $yn == [Yy] ]]; then
+             echo -e "${Info} VPS 重启中..."
+             reboot
+             fi
 }
 
 #安装xanmod内核  from xanmod.org
