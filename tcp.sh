@@ -617,6 +617,7 @@ install_ipv6(){
 	sleep 3
 	start_menu
 	;;
+	*)
 	clear
 	echo -e "${Error}:请输入正确数字 [0-2]"
 	sleep 5s
