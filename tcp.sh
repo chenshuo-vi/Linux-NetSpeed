@@ -515,7 +515,6 @@ installbbrplusnew(){
 
 #启用BBR+fq
 startbbrfq(){
-	remove_all
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
@@ -524,7 +523,6 @@ startbbrfq(){
 
 #启用BBR+cake
 startbbrcake(){
-	remove_all
 	echo "net.core.default_qdisc=cake" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
@@ -533,7 +531,6 @@ startbbrcake(){
 
 #启用BBRplus
 startbbrplus(){
-	remove_all
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbrplus" >> /etc/sysctl.conf
 	sysctl -p
@@ -542,7 +539,6 @@ startbbrplus(){
 
 #启用Lotserver
 startlotserver(){
-	remove_all
 	if [[ "${release}" == "centos" ]]; then
 		yum install ethtool
 	else
@@ -550,7 +546,7 @@ startlotserver(){
 		apt-get install ethtool
 	fi
 	#bash <(wget -qO- https://git.io/lotServerInstall.sh) install
-	bash <(wget --no-check-certificate -qO- https://github.com/xidcn/LotServer_Vicer/raw/master/Install.sh) install
+	bash <(wget --no-check-certificate -qO- https://github.com/chenshuo-as/LotServer_Vicer/raw/master/Install.sh) install
 	sed -i '/advinacc/d' /appex/etc/config
 	sed -i '/maxmode/d' /appex/etc/config
 	echo -e "advinacc=\"1\"
@@ -561,7 +557,6 @@ maxmode=\"1\"">>/appex/etc/config
 
 #启用BBR2+FQ
 startbbr2fq(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=0" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -571,7 +566,6 @@ startbbr2fq(){
 
 #启用BBR2+CAKE
 startbbr2cake(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=0" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=cake" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -581,7 +575,6 @@ startbbr2cake(){
 
 #启用BBR2+FQ+ecn
 startbbr2fqecn(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=1" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -591,7 +584,6 @@ startbbr2fqecn(){
 
 #启用BBR2+CAKE+ecn
 startbbr2cakeecn(){
-	remove_all
 	echo "net.ipv4.tcp_ecn=1" >> /etc/sysctl.conf
 	echo "net.core.default_qdisc=cake" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
@@ -599,6 +591,39 @@ startbbr2cakeecn(){
 	echo -e "${Info}BBR2修改成功，重启生效！"
 }
 
+#安装trojan
+install_trojan(){
+        apt-get install curl -y
+        source <(curl -sL https://raw.githubusercontent.com/chenshuo-as/trojan/master/install.sh)
+	start_menu
+}
+
+#安装virmach的ipv6
+install_ipv6(){
+        echo "请选择添加ipv6的vps"
+        echo "1: virmach 洛杉矶I"
+        echo "2: virmach 圣何塞"
+	read -p " 请输入数字 :" num
+  case "$num" in
+	1)
+	wget -N -P /usr/bin --no-check-certificate "https://raw.githubusercontent.com/chenshuo-as/vir-ipv6/main/vir-la.sh"
+	bash /usr/bin/vir-la.sh
+	sleep 3
+	start_menu
+	;;
+	2)
+	wget -N -P /usr/bin --no-check-certificate "https://raw.githubusercontent.com/chenshuo-as/vir-ipv6/main/vir-sj.sh"
+	bash /usr/bin/vir-sj.sh
+	sleep 3
+	start_menu
+	;;
+	clear
+	echo -e "${Error}:请输入正确数字 [0-2]"
+	sleep 5s
+	start_menu
+	;;
+   esac
+}
 
 #卸载全部加速
 remove_all(){
@@ -700,6 +725,8 @@ net.ipv4.ip_forward = 1">>/etc/sysctl.conf
 	if [[ $yn == [Yy] ]]; then
 		echo -e "${Info} VPS 重启中..."
 		reboot
+	else
+	    start_menu
 	fi
 }
 #更新脚本
@@ -738,12 +765,12 @@ gototeddysun_bbr(){
 #开始菜单
 start_menu(){
 clear
-echo && echo -e " TCP加速 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
+echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
  更新内容及反馈:  https://blog.ylx.me/archives/783.html 运行./tcp.sh再次调用本脚本 母鸡慎用
-  
+ 
  ${Green_font_prefix}0.${Font_color_suffix} 升级脚本
- ${Green_font_prefix}9.${Font_color_suffix} 切换到不卸载内核版本
- ${Green_font_prefix}8.${Font_color_suffix} 切换到秋水逸冰BBR安装脚本 
+ ${Green_font_prefix}9.${Font_color_suffix} 切换到卸载内核版本
+ ${Green_font_prefix}8.${Font_color_suffix} 切换到秋水逸冰BBR安装脚本
 ————————————内核管理————————————
  ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR原版内核 - 5.6.15/5.7.7
  ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核 - 4.14.129
@@ -762,9 +789,12 @@ echo && echo -e " TCP加速 一键安装管理脚本 ${Red_font_prefix}[v${sh_ve
  ${Green_font_prefix}17.${Font_color_suffix} 使用BBR2+FQ+ECN加速
  ${Green_font_prefix}18.${Font_color_suffix} 使用BBR2+CAKE+ECN加速 
 ————————————杂项管理————————————
+ ${Green_font_prefix}19.${Font_color_suffix} 安装trojan
+ ${Green_font_prefix}20.${Font_color_suffix} 添加ipv6
  ${Green_font_prefix}21.${Font_color_suffix} 卸载全部加速
  ${Green_font_prefix}22.${Font_color_suffix} 系统配置优化
  ${Green_font_prefix}23.${Font_color_suffix} 退出脚本
+ ${Green_font_prefix}24.${Font_color_suffix} 重启系统
 ————————————————————————————————" && echo
 
 	check_status
@@ -808,7 +838,7 @@ case "$num" in
 	gototeddysun_bbr
 	;;
 	9)
-	gototcpx	
+	gototcp
 	;;
 	11)
 	startbbrfq
@@ -834,6 +864,12 @@ case "$num" in
 	18)
 	startbbr2cakeecn
 	;;
+	19)
+	install_trojan
+	;;
+	20)
+	install_ipv6
+	;;
 	21)
 	remove_all
 	;;
@@ -843,9 +879,12 @@ case "$num" in
 	23)
 	exit 1
 	;;
+	24)
+	reboot
+	;;
 	*)
 	clear
-	echo -e "${Error}:请输入正确数字 [0-23]"
+	echo -e "${Error}:请输入正确数字 [0-24]"
 	sleep 5s
 	start_menu
 	;;
@@ -1230,4 +1269,5 @@ check_status(){
 check_sys
 check_version
 [[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
+apt-get update
 start_menu
