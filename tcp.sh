@@ -519,6 +519,8 @@ startbbrfq(){
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBR+FQ修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #启用BBR+cake
@@ -527,6 +529,8 @@ startbbrcake(){
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBR+cake修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #启用BBRplus
@@ -535,6 +539,8 @@ startbbrplus(){
 	echo "net.ipv4.tcp_congestion_control=bbrplus" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBRplus修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #启用Lotserver
@@ -552,6 +558,7 @@ startlotserver(){
 	echo -e "advinacc=\"1\"
 maxmode=\"1\"">>/appex/etc/config
 	/appex/bin/lotServer.sh restart
+	sleep 1s
 	start_menu
 }
 
@@ -562,6 +569,8 @@ startbbr2fq(){
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBR2修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #启用BBR2+CAKE
@@ -571,6 +580,8 @@ startbbr2cake(){
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBR2修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #启用BBR2+FQ+ecn
@@ -580,6 +591,8 @@ startbbr2fqecn(){
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBR2修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #启用BBR2+CAKE+ecn
@@ -589,6 +602,8 @@ startbbr2cakeecn(){
 	echo "net.ipv4.tcp_congestion_control=bbr2" >> /etc/sysctl.conf
 	sysctl -p
 	echo -e "${Info}BBR2修改成功，重启生效！"
+	sleep 2s
+	start_menu
 }
 
 #安装trojan
