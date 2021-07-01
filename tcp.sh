@@ -611,6 +611,7 @@ startbbr2cakeecn(){
 install_trojan(){
         apt-get install curl -y
         source <(curl -sL https://raw.githubusercontent.com/chenshuo-dr/trojan/master/install.sh)
+	sleep 2s
 	start_menu
 }
 
