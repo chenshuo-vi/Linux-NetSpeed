@@ -610,7 +610,7 @@ startbbr2cakeecn(){
 #安装trojan
 install_trojan(){
         apt-get install curl -y
-        source <(curl -sL https://raw.githubusercontent.com/chenshuo-as/trojan/master/install.sh)
+        source <(curl -sL https://raw.githubusercontent.com/chenshuo-dr/trojan/master/install.sh)
 	start_menu
 }
 
