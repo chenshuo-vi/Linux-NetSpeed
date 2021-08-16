@@ -772,7 +772,7 @@ clear
 echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
 
 ————————————内核管理————————————
- ${Green_font_prefix}0.${Font_color_suffix} 安装 系统最新内核
+ ${Green_font_prefix}0.${Font_color_suffix} 安装 系统最新内核 - 多种
  ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR原版内核 - 5.6.15/5.7.7
  ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核 - 4.14.129
  ${Green_font_prefix}3.${Font_color_suffix} 安装 Lotserver(锐速)内核 - 多种
