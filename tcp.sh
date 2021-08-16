@@ -644,7 +644,7 @@ install_ipv6(){
 	*)
 	clear
 	echo -e "${Error}:请输入正确数字 [0-2]"
-	sleep 5s
+	sleep 3s
 	start_menu
 	;;
    esac
@@ -656,6 +656,8 @@ if [ "$main" -lt 5 ]|| [ "$minor" -lt 6 ]; then
 	exit 1
 fi
 bash <(curl -fsSL git.io/warp.sh) 6
+sleep 5s
+start_menu
 }
 
 function install_v2ray(){
