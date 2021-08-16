@@ -56,6 +56,30 @@ sudo dpkg -i *.deb
 reboot
 }
 
+function menu(){
+    clear
+    green " 请确认当前的VPS属于以下哪种IP表现形式！" 
+    blue " 1. 纯IPV4/双栈IPV4+IPV6 "    
+    blue " 2. 纯IPV6 "
+    red " 0. 返回上一层 "
+    echo
+    read -p "请输入数字:" menuNumberInput
+    case "$menuNumberInput" in   
+     1 )
+        v46
+     ;;
+     2 )
+        v6
+     ;;
+     0 )
+       start_menu
+     ;;
+      esac
+}
+
+menu  
+}
+
 function de(){
 echo 'deb http://deb.debian.org/debian buster-backports main'>> /etc/apt/sources.list
 apt update 
