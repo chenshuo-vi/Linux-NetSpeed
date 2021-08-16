@@ -11,12 +11,17 @@ export PATH
 #=================================================
 
 sh_ver="1.3.2.38"
-github="raw.githubusercontent.com/chenshuo-op/Linux-NetSpeed/master/"
+github="raw.githubusercontent.com/chenshuo-dr/Linux-NetSpeed/master/"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
 Info="${Green_font_prefix}[信息]${Font_color_suffix}"
 Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
+
+#更新系统到最新版内核
+function upcore(){
+wget -N --no-check-certificate https://cdn.jsdelivr.net/gh/YG-tsj/CFWarp-Pro/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
+}
 
 #安装BBR内核
 installbbr(){
@@ -609,7 +614,6 @@ startbbr2cakeecn(){
 
 #安装trojan
 install_trojan(){
-        apt-get install curl -y
         source <(curl -sL https://raw.githubusercontent.com/chenshuo-dr/trojan/master/install.sh)
 	sleep 2s
 	start_menu
@@ -747,49 +751,16 @@ net.ipv4.ip_forward = 1">>/etc/sysctl.conf
 	    start_menu
 	fi
 }
-#更新脚本
-Update_Shell(){
-	echo -e "当前版本为 [ ${sh_ver} ]，开始检测最新版本..."
-	sh_new_ver=$(wget -qO- "https://${github}/tcp.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
-	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 检测最新版本失败 !" && start_menu
-	if [[ ${sh_new_ver} != ${sh_ver} ]]; then
-		echo -e "发现新版本[ ${sh_new_ver} ]，是否更新？[Y/n]"
-		read -p "(默认: y):" yn
-		[[ -z "${yn}" ]] && yn="y"
-		if [[ ${yn} == [Yy] ]]; then
-			wget -N "https://${github}/tcp.sh" && chmod +x tcp.sh
-			echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !"
-		else
-			echo && echo "	已取消..." && echo
-		fi
-	else
-		echo -e "当前已是最新版本[ ${sh_new_ver} ] !"
-		sleep 5s
-	fi
-}
 
-#切换到不卸载内核版本
-gototcpx(){
-	clear
-	wget -N "https://github.000060000.xyz/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
-}
 
-#切换到秋水逸冰BBR安装脚本
-gototeddysun_bbr(){
-	clear
-	wget https://github.com/teddysun/across/raw/master/bbr.sh && chmod +x bbr.sh && ./bbr.sh
-}
 
 #开始菜单
 start_menu(){
 clear
 echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
- 更新内容及反馈:  https://blog.ylx.me/archives/783.html 运行./tcp.sh再次调用本脚本 母鸡慎用
- 
- ${Green_font_prefix}0.${Font_color_suffix} 升级脚本
- ${Green_font_prefix}9.${Font_color_suffix} 切换到卸载内核版本
- ${Green_font_prefix}8.${Font_color_suffix} 切换到秋水逸冰BBR安装脚本
+
 ————————————内核管理————————————
+ ${Green_font_prefix}0.${Font_color_suffix} 安装 系统最新内核
  ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR原版内核 - 5.6.15/5.7.7
  ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核 - 4.14.129
  ${Green_font_prefix}3.${Font_color_suffix} 安装 Lotserver(锐速)内核 - 多种
@@ -829,7 +800,7 @@ echo
 read -p " 请输入数字 :" num
 case "$num" in
 	0)
-	Update_Shell
+	up_core
 	;;
 	1)
 	check_sys_bbr
@@ -1288,4 +1259,5 @@ check_sys
 check_version
 [[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
 apt-get update
+apt-get install curl -y
 start_menu
