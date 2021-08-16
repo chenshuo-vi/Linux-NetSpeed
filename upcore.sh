@@ -90,28 +90,28 @@ reboot
 function start_menu(){
     clear
     green " 更新系统内核到官方源最新版本！" 
-    blue " 1. Centos7 "    
-    blue " 2. Centos8 "
-    blue " 3. Ubuntu20 "
-    blue " 4. Debain10 "
-    blue " 0. 退出脚本 "
+    blue " 1. Debain10 "
+    blue " 2. Centos7 "    
+    blue " 3. Centos8 "
+    blue " 4. Ubuntu20 "
+    blue " 0. 返回 "
     echo
     read -p "请输入数字:" menuNumberInput
     case "$menuNumberInput" in   
      1 )
-        c7
-     ;;
-     2 )
-        c8
-     ;;
-     3 )
-        ub
-     ;;
-     4 )
         de
      ;;
+     2 )
+        c7
+     ;;
+     3 )
+        c8
+     ;;
+     4 )
+        ub
+     ;;
      0 )
-       exit 1
+       /tcp.sh
      ;;
       esac
 }
