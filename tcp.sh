@@ -18,6 +18,9 @@ Info="${Green_font_prefix}[信息]${Font_color_suffix}"
 Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
+main=`uname  -r | awk -F . '{print $1 }'`
+minor=`uname -r | awk -F . '{print $2}'`
+
 #更新系统到最新版内核
 function up_core(){
 wget -N --no-check-certificate https://raw.githubusercontent.com/chenshuo-dr/Linux-NetSpeed/master/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
