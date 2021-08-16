@@ -20,7 +20,7 @@ Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #更新系统到最新版内核
 function upcore(){
-wget -N --no-check-certificate https://cdn.jsdelivr.net/gh/YG-tsj/CFWarp-Pro/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
+wget -N --no-check-certificate https://raw.githubusercontent.com/chenshuo-dr/Linux-NetSpeed/master/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
 }
 
 #安装BBR内核
@@ -647,6 +647,18 @@ install_ipv6(){
    esac
 }
 
+function install_warp6(){
+if [ "$main" -lt 5 ]|| [ "$minor" -lt 6 ]; then 
+	red " 检测到内核版本小于5.6，回到菜单，选择2，更新内核吧"
+	exit 1
+fi
+bash <(curl -fsSL git.io/warp.sh) 6
+}
+
+function install_v2ray(){
+wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
+}
+
 #卸载全部加速
 remove_all(){
 	rm -rf bbrmod
@@ -778,12 +790,14 @@ echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_fo
  ${Green_font_prefix}17.${Font_color_suffix} 使用BBR2+FQ+ECN加速
  ${Green_font_prefix}18.${Font_color_suffix} 使用BBR2+CAKE+ECN加速 
 ————————————杂项管理————————————
- ${Green_font_prefix}19.${Font_color_suffix} 安装trojan
- ${Green_font_prefix}20.${Font_color_suffix} 添加ipv6
- ${Green_font_prefix}21.${Font_color_suffix} 卸载全部加速
- ${Green_font_prefix}22.${Font_color_suffix} 系统配置优化
- ${Green_font_prefix}23.${Font_color_suffix} 退出脚本
- ${Green_font_prefix}24.${Font_color_suffix} 重启系统
+ ${Green_font_prefix}19.${Font_color_suffix} 添加HE虚拟ipv6
+ ${Green_font_prefix}20.${Font_color_suffix} 添加WARP虚拟IPV6
+ ${Green_font_prefix}21.${Font_color_suffix} 安装trojan
+ ${Green_font_prefix}22.${Font_color_suffix} 安装v2ray和xray
+ ${Green_font_prefix}23.${Font_color_suffix} 卸载全部加速
+ ${Green_font_prefix}24.${Font_color_suffix} 系统配置优化
+ ${Green_font_prefix}25.${Font_color_suffix} 退出脚本
+ ${Green_font_prefix}26.${Font_color_suffix} 重启系统
 ————————————————————————————————" && echo
 
 	check_status
@@ -854,21 +868,27 @@ case "$num" in
 	startbbr2cakeecn
 	;;
 	19)
-	install_trojan
-	;;
-	20)
 	install_ipv6
 	;;
+	20)
+	install_warp6
+	;;
 	21)
-	remove_all
+	install_trojan
 	;;
 	22)
-	optimizing_system
+	install_v2ray
 	;;
 	23)
-	exit 1
+	remove_all
 	;;
 	24)
+	optimizing_system
+	;;
+	25)
+	exit 1
+	;;
+	26)
 	reboot
 	;;
 	*)
