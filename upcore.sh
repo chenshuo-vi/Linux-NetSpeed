@@ -53,7 +53,6 @@ reboot
 
 function start_menu(){
     clear
-    echo && echo -e " 更新系统内核到官方源最新版本！ ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
     echo -e " 更新系统内核到官方源最新版本！${Red_font_prefix}${Font_color_suffix}"
     ${Green_font_prefix}1.${Font_color_suffix} Debain10
     ${Green_font_prefix}2.${Font_color_suffix} Centos7
