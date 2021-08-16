@@ -94,7 +94,6 @@ function start_menu(){
     blue " 2. Centos7 "    
     blue " 3. Centos8 "
     blue " 4. Ubuntu20 "
-    blue " 0. 返回 "
     echo
     read -p "请输入数字:" menuNumberInput
     case "$menuNumberInput" in   
@@ -109,9 +108,6 @@ function start_menu(){
      ;;
      4 )
         ub
-     ;;
-     0 )
-       /tcp.sh
      ;;
       esac
 }
