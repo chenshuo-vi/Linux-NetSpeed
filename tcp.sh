@@ -652,7 +652,7 @@ install_ipv6(){
 
 function install_warp6(){
 if [ "$main" -lt 5 ]|| [ "$minor" -lt 6 ]; then 
-	red " 检测到内核版本小于5.6，回到菜单，选择2，更新内核吧"
+	echo " 检测到内核版本小于5.6，回到菜单，选择2，更新内核吧"
 	exit 1
 fi
 bash <(curl -fsSL git.io/warp.sh) 6
