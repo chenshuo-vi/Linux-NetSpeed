@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 
-Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
+#彩色
+red(){
+    echo -e "\033[31m\033[01m$1\033[0m"
+}
+green(){
+    echo -e "\033[32m\033[01m$1\033[0m"
+}
+yellow(){
+    echo -e "\033[33m\033[01m$1\033[0m"
+}
+blue(){
+    echo -e "\033[36m\033[01m$1\033[0m"
+}
+
 
 function c8(){
 rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
@@ -53,11 +66,12 @@ reboot
 
 function start_menu(){
     clear
-    echo "更新系统内核到官方源最新版本！"
-    ${Green_font_prefix}1.${Font_color_suffix} Debain10
-    ${Green_font_prefix}2.${Font_color_suffix} Centos7
-    ${Green_font_prefix}3.${Font_color_suffix} Centos8
-    ${Green_font_prefix}4.${Font_color_suffix} Ubuntu20
+    red " 更新系统内核到官方源最新版本！"
+    echo "1: Debain10"
+    echo "2: Centos7"
+    echo "3: Centos8"
+    echo "4: Ubuntu20"
+
     echo
     read -p "请输入数字:" menuNumberInput
     case "$menuNumberInput" in   
