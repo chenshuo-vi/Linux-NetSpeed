@@ -19,7 +19,7 @@ Error="${Red_font_prefix}[错误]${Font_color_suffix}"
 Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 
 #更新系统到最新版内核
-function upcore(){
+function up_core(){
 wget -N --no-check-certificate https://raw.githubusercontent.com/chenshuo-dr/Linux-NetSpeed/master/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
 }
 
