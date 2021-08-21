@@ -661,7 +661,7 @@ start_menu
 }
 
 function install_v2ray(){
-wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
+wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/chenshuo-dr/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
 }
 
 #卸载全部加速
