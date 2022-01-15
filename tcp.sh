@@ -21,6 +21,17 @@ Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
 main=`uname  -r | awk -F . '{print $1 }'`
 minor=`uname -r | awk -F . '{print $2}'`
 
+#检查连接
+checkurl() {
+  url=$(curl --max-time 5 --retry 3 --retry-delay 2 --connect-timeout 2 -s --head $1 | head -n 1)
+  if [[ ${url} == *200* || ${url} == *302* || ${url} == *308* ]]; then
+    echo "下载地址检查OK，继续！"
+  else
+    echo "下载地址检查出错，退出！"
+    exit 1
+  fi
+}
+
 #更新系统到最新版内核
 function up_core(){
 wget -N --no-check-certificate https://raw.githubusercontent.com/chenshuo-dr/Linux-NetSpeed/master/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
@@ -1011,6 +1022,38 @@ detele_kernel(){
 			echo -e " 检测到 内核 数量不正确，请检查 !" && exit 1
 		fi
 	fi
+}
+
+detele_kernel_head() {
+  if [[ "${release}" == "centos" ]]; then
+    rpm_total=$(rpm -qa | grep kernel-headers | grep -v "${kernel_version}" | grep -v "noarch" | wc -l)
+    if [ "${rpm_total}" ] >"1"; then
+      echo -e "检测到 ${rpm_total} 个其余head内核，开始卸载..."
+      for ((integer = 1; integer <= ${rpm_total}; integer++)); do
+        rpm_del=$(rpm -qa | grep kernel-headers | grep -v "${kernel_version}" | grep -v "noarch" | head -${integer})
+        echo -e "开始卸载 ${rpm_del} headers内核..."
+        rpm --nodeps -e ${rpm_del}
+        echo -e "卸载 ${rpm_del} 内核卸载完成，继续..."
+      done
+      echo --nodeps -e "内核卸载完毕，继续..."
+    else
+      echo -e " 检测到 内核 数量不正确，请检查 !" && exit 1
+    fi
+  elif [[ "${release}" == "debian" || "${release}" == "ubuntu" ]]; then
+    deb_total=$(dpkg -l | grep linux-headers | awk '{print $2}' | grep -v "${kernel_version}" | wc -l)
+    if [ "${deb_total}" ] >"1"; then
+      echo -e "检测到 ${deb_total} 个其余head内核，开始卸载..."
+      for ((integer = 1; integer <= ${deb_total}; integer++)); do
+        deb_del=$(dpkg -l | grep linux-headers | awk '{print $2}' | grep -v "${kernel_version}" | head -${integer})
+        echo -e "开始卸载 ${deb_del} headers内核..."
+        apt-get purge -y ${deb_del}
+        echo -e "卸载 ${deb_del} 内核卸载完成，继续..."
+      done
+      echo -e "内核卸载完毕，继续..."
+    else
+      echo -e " 检测到 内核 数量不正确，请检查 !" && exit 1
+    fi
+  fi
 }
 
 #更新引导
