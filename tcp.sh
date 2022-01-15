@@ -470,55 +470,130 @@ installzen(){
 }
 
 #安装bbrplus 新内核
-installbbrplusnew(){
-	kernel_version="4.14.182-bbrplus"
-	bit=`uname -m`
-	rm -rf bbrplusnew
-	mkdir bbrplusnew && cd bbrplusnew
-	if [[ "${release}" == "centos" ]]; then
-		if [[ ${version} = "7" ]]; then
-			if [[ ${bit} = "x86_64" ]]; then
-				wget -N -O kernel-c7.rpm https://github.com/UJX6N/bbrplus-5.10/releases/download/5.10.23-bbrplus/CentOS-7_Required_kernel-bbrplus-5.10.23-1.bbrplus.el7.x86_64.rpm
-				wget -N -O kernel-headers-c7.rpm https://github.com/UJX6N/bbrplus-5.10/releases/download/5.10.23-bbrplus/CentOS-7_Optional_kernel-bbrplus-headers-5.10.23-1.bbrplus.el7.x86_64.rpm
-				wget -N -O kernel-devel-c7.rpm https://github.com/UJX6N/bbrplus-5.10/releases/download/5.10.23-bbrplus/CentOS-7_Optional_kernel-bbrplus-devel-5.10.23-1.bbrplus.el7.x86_64.rpm
-				yum install -y kernel-c7.rpm
-				yum install -y kernel-headers-c7.rpm
-			        yum install -y kernel-devel-c7.rpm
-				
-				kernel_version="5.10.23_bbrplus"
-			else
-				echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-			fi
-		fi
-	elif [[ "${release}" == "debian" ]]; then
-		if [[ ${version} = "10" ]]; then
-			if [[ ${bit} = "x86_64" ]]; then
-				wget -N -O linux-headers-d10.deb https://github.com/UJX6N/bbrplus-5.10/releases/download/5.10.23-bbrplus/Debian-Ubuntu_Required_linux-headers-5.10.23-bbrplus_5.10.23-bbrplus-1_amd64.deb
-				wget -N -O linux-image-d10.deb https://github.com/UJX6N/bbrplus-5.10/releases/download/5.10.23-bbrplus/Debian-Ubuntu_Required_linux-image-5.10.23-bbrplus_5.10.23-bbrplus-1_amd64.deb
-					
-				dpkg -i linux-image-d10.deb
-				dpkg -i linux-headers-d10.deb
-				
-				kernel_version="5.10.23-bbrplus"
-			else
-				echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-			fi		
-		fi			
-	fi
+check_sys_bbrplusnew() {
+  check_version
+  if [[ "${release}" == "centos" ]]; then
+    #if [[ ${version} == "7" ]]; then
+    if [[ ${version} == "7" || ${version} == "8" ]]; then
+      installbbrplusnew
+    else
+      echo -e "${Error} BBRplusNew内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+    fi
+  elif [[ "${release}" == "debian" || "${release}" == "ubuntu" ]]; then
+    apt-get --fix-broken install -y && apt-get autoremove -y
+    installbbrplusnew
+  else
+    echo -e "${Error} BBRplusNew内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+  fi
+}
 
-	cd .. && rm -rf bbrplusnew
-	detele_kernel
-	BBR_grub
-	echo -e "${Tip} ${Red_font_prefix}请检查上面是否有内核信息，无内核千万别重启${Font_color_suffix}"
-	echo -e "${Tip} ${Red_font_prefix}rescue不是正常内核，要排除这个${Font_color_suffix}"
-	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBRplus${Font_color_suffix}"
-	stty erase '^H' && read -p "需要重启VPS后，才能开启BBRplus，是否现在重启 ? [Y/n] :" yn
-	[ -z "${yn}" ] && yn="y"
-	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
-		reboot
-	fi
-	#echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+installbbrplusnew() {
+  github_ver_plus=$(curl -s https://api.github.com/repos/UJX6N/bbrplus-5.10/releases | grep /bbrplus-5.10/releases/tag/ | head -1 | awk -F "[/]" '{print $8}' | awk -F "[\"]" '{print $1}')
+  github_ver_plus_num=$(curl -s https://api.github.com/repos/UJX6N/bbrplus-5.10/releases | grep /bbrplus-5.10/releases/tag/ | head -1 | awk -F "[/]" '{print $8}' | awk -F "[\"]" '{print $1}' | awk -F "[-]" '{print $1}')
+  echo -e "获取的UJX6N的bbrplus-5.10版本号为:${github_ver_plus}"
+  # kernel_version=$github_ver_plus
+
+  bit=$(uname -m)
+  #if [[ ${bit} != "x86_64" ]]; then
+  #  echo -e "${Error} 不支持x86_64以外的系统 !" && exit 1
+  #fi
+  rm -rf bbrplusnew
+  mkdir bbrplusnew && cd bbrplusnew || exit
+  if [[ "${release}" == "centos" ]]; then
+    if [[ ${version} == "7" ]]; then
+      if [[ ${bit} == "x86_64" ]]; then
+        #github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Centos_Kernel' | grep '_latest_bbrplus_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+        #github_ver=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'rpm' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}' | awk -F '[_]' '{print $1}')
+        #echo -e "获取的版本号为:${github_ver}"
+        kernel_version=${github_ver_plus_num}_bbrplus
+        detele_kernel_head
+        headurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'rpm' | grep 'headers' | grep 'el7' | awk -F '"' '{print $4}')
+        imgurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'rpm' | grep -v 'devel' | grep -v 'headers' | grep -v 'Source' | grep 'el7' | awk -F '"' '{print $4}')
+        echo -e "正在检查headers下载连接...."
+        checkurl $headurl
+        echo -e "正在检查内核下载连接...."
+        checkurl $imgurl
+        wget -N -O kernel-c7.rpm $headurl
+        wget -N -O kernel-headers-c7.rpm $imgurl
+        yum install -y kernel-c7.rpm
+        yum install -y kernel-headers-c7.rpm
+      else
+        echo -e "${Error} 不支持x86_64以外的系统 !" && exit 1
+      fi
+    fi
+    if [[ ${version} == "8" ]]; then
+      if [[ ${bit} == "x86_64" ]]; then
+        #github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Centos_Kernel' | grep '_latest_bbrplus_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+        #github_ver=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'rpm' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}' | awk -F '[_]' '{print $1}')
+        #echo -e "获取的版本号为:${github_ver}"
+        kernel_version=${github_ver_plus_num}_bbrplus
+        detele_kernel_head
+        headurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'rpm' | grep 'headers' | grep 'el8' | awk -F '"' '{print $4}')
+        imgurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'rpm' | grep -v 'devel' | grep -v 'headers' | grep -v 'Source' | grep 'el8' | awk -F '"' '{print $4}')
+        echo -e "正在检查headers下载连接...."
+        checkurl $headurl
+        echo -e "正在检查内核下载连接...."
+        checkurl $imgurl
+        wget -N -O kernel-c8.rpm $headurl
+        wget -N -O kernel-headers-c8.rpm $imgurl
+        yum install -y kernel-c8.rpm
+        yum install -y kernel-headers-c8.rpm
+      else
+        echo -e "${Error} 不支持x86_64以外的系统 !" && exit 1
+      fi
+    fi
+  elif [[ "${release}" == "debian" || "${release}" == "ubuntu" ]]; then
+    if [[ ${bit} == "x86_64" ]]; then
+      #github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Ubuntu_Kernel' | grep '_latest_bbrplus_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+      #github_ver=$(curl -s 'http s://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}' | awk -F '[_]' '{print $1}')
+      #echo -e "获取的版本号为:${github_ver}"
+      kernel_version=${github_ver_plus_num}-bbrplus
+      detele_kernel_head
+      headurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'https' | grep 'amd64.deb' | grep 'headers' | awk -F '"' '{print $4}')
+      imgurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'https' | grep 'amd64.deb' | grep 'image' | awk -F '"' '{print $4}')
+      echo -e "正在检查headers下载连接...."
+      checkurl $headurl
+      echo -e "正在检查内核下载连接...."
+      checkurl $imgurl
+      wget -N -O linux-headers-d10.deb $headurl
+      wget -N -O linux-image-d10.deb $imgurl
+      dpkg -i linux-image-d10.deb
+      dpkg -i linux-headers-d10.deb
+    elif [[ ${bit} == "aarch64" ]]; then
+      #github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Ubuntu_Kernel' | grep '_latest_bbrplus_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+      #github_ver=$(curl -s 'http s://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}' | awk -F '[_]' '{print $1}')
+      #echo -e "获取的版本号为:${github_ver}"
+      kernel_version=${github_ver_plus_num}-bbrplus
+      detele_kernel_head
+      headurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'https' | grep 'arm64.deb' | grep 'headers' | awk -F '"' '{print $4}')
+      imgurl=$(curl -s 'https://api.github.com/repos/UJX6N/bbrplus-5.10/releases' | grep ${github_ver_plus} | grep 'https' | grep 'arm64.deb' | grep 'image' | awk -F '"' '{print $4}')
+      echo -e "正在检查headers下载连接...."
+      checkurl $headurl
+      echo -e "正在检查内核下载连接...."
+      checkurl $imgurl
+      wget -N -O linux-headers-d10.deb $headurl
+      wget -N -O linux-image-d10.deb $imgurl
+      dpkg -i linux-image-d10.deb
+      dpkg -i linux-headers-d10.deb
+    else
+      echo -e "${Error} 不支持x86_64及arm64/aarch64以外的系统 !" && exit 1
+    fi
+  fi
+
+  cd .. && rm -rf bbrplusnew
+  detele_kernel
+  BBR_grub
+  echo -e "${Tip} ${Red_font_prefix}请检查上面是否有内核信息，无内核千万别重启${Font_color_suffix}"
+  echo -e "${Tip} ${Red_font_prefix}rescue不是正常内核，要排除这个${Font_color_suffix}"
+  echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBRplus${Font_color_suffix}"
+  check_kernel
+  stty erase '^H' && read -p "需要重启VPS后，才能开启BBRplus，是否现在重启 ? [Y/n] :" yn
+  [ -z "${yn}" ] && yn="y"
+  if [[ $yn == [Yy] ]]; then
+    echo -e "${Info} VPS 重启中..."
+    reboot
+  fi
+  #echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
 
 }
 
@@ -784,7 +859,7 @@ echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_fo
  ${Green_font_prefix}4.${Font_color_suffix} 安装 xanmod版内核 - 5.5.1/5.7.7
  ${Green_font_prefix}5.${Font_color_suffix} 安装 BBR2测试版内核 - 5.4.0
  ${Green_font_prefix}6.${Font_color_suffix} 安装 Zen版内核 - 5.5.2/5.5.10
- ${Green_font_prefix}7.${Font_color_suffix} 安装 BBRplus新版内核 - 5.10.23
+ ${Green_font_prefix}7.${Font_color_suffix} 安装 BBRplus新版内核 - 最新
 ————————————加速管理————————————
  ${Green_font_prefix}11.${Font_color_suffix} 使用BBR+FQ加速
  ${Green_font_prefix}12.${Font_color_suffix} 使用BBR+CAKE加速 
