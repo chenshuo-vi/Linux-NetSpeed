@@ -1148,25 +1148,6 @@ check_sys_bbrplus(){
 	fi
 }
 
-check_sys_bbrplusnew(){
-	check_version
-	if [[ "${release}" == "centos" ]]; then
-		if [[ ${version} = "7" ]]; then
-			installbbrplusnew
-		else
-			echo -e "${Error} BBRplusNew内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
-		fi
-	elif [[ "${release}" == "debian" ]]; then
-		if [[ ${version} = "10" ]]; then
-			installbbrplusnew
-		else
-			echo -e "${Error} BBRplusNew内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
-		fi
-	else
-		echo -e "${Error} BBRplusNew内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
-	fi
-}
-
 check_sys_xanmod(){
 	check_version
 	if [[ "${release}" == "centos" ]]; then
