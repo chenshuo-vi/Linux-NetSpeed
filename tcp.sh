@@ -38,168 +38,95 @@ wget -N --no-check-certificate https://raw.githubusercontent.com/chenshuo-dr/Lin
 }
 
 #安装BBR内核
-installbbr(){
-	kernel_version="5.6.15"
-	bit=`uname -m`
-	rm -rf bbr
-	mkdir bbr && cd bbr
-	
-	if [[ "${release}" == "centos" ]]; then
-		if [[ ${version} = "6" ]]; then
-			if [[ ${bit} = "x86_64" ]]; then
-				wget -N -O kernel-headers-c6.rpm https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EUCmObDQnMZEmKnhxS67sJkBG8kjbx0bjNF-XwTtzvgtAA?download=1
-				wget -N -O kernel-c6.rpm https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EeC72joP3HVNmrIbjlPg_coBs7kj29Md4f9psAjZOuqOdg?download=1
-			
-				yum install -y kernel-c6.rpm
-				yum install -y kernel-headers-c6.rpm
-			
-				#kernel_version="5.5.5"
-			else
-				echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-			fi
-		
-		elif [[ ${version} = "7" ]]; then
-			if [[ ${bit} = "x86_64" ]]; then
-				wget -N -O kernel-headers-c7.rpm https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/Eaib8zncs31BjxevUF7cXHwBVkU8uzoSmMo1YfaJ2PL4tQ?download=1
-				wget -N -O kernel-c7.rpm https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EYPrdrXr-apKpMReygtko_QBMDpNx-RNEgs_3u6NYssoPg?download=1
+installbbr() {
+  kernel_version="5.9.6"
+  bit=$(uname -m)
+  rm -rf bbr
+  mkdir bbr && cd bbr || exit
 
-				yum install -y kernel-c7.rpm
-				yum install -y kernel-headers-c7.rpm
-			
-				kernel_version="5.7.7"
-			else
-				echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-			fi	
-			
-		elif [[ ${version} = "8" ]]; then
-			wget -N -O kernel-c8.rpm https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/ETadaTIeeQJCgxEXKlOFiCEBsBa-Y15QbDkv-HQGo2EHSQ?download=1
-			wget -N -O kernel-headers-c8.rpm https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EZEZyLBjDplMgSqDzyaqkvYBW06OOKDCcIQq27381fa5-A?download=1
+  if [[ "${release}" == "centos" ]]; then
+    if [[ ${version} == "7" ]]; then
+      if [[ ${bit} == "x86_64" ]]; then
+        echo -e "如果下载地址出错，可能当前正在更新，超过半天还是出错请反馈，大陆自行解决污染问题"
+        #github_ver=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}' | awk -F '[_]' '{print $3}')
+        github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Centos_Kernel' | grep '_latest_bbr_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+        github_ver=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'rpm' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}')
+        echo -e "获取的版本号为:${github_ver}"
+        kernel_version=$github_ver
+        detele_kernel_head
+        headurl=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'rpm' | grep 'headers' | awk -F '"' '{print $4}')
+        imgurl=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'rpm' | grep -v 'headers' | grep -v 'devel' | awk -F '"' '{print $4}')
+        #headurl=https://github.com/ylx2016/kernel/releases/download/$github_tag/kernel-headers-${github_ver}-1.x86_64.rpm
+        #imgurl=https://github.com/ylx2016/kernel/releases/download/$github_tag/kernel-${github_ver}-1.x86_64.rpm
+        echo -e "正在检查headers下载连接...."
+        checkurl $headurl
+        echo -e "正在检查内核下载连接...."
+        checkurl $imgurl
+        wget -N -O kernel-headers-c7.rpm $headurl
+        wget -N -O kernel-c7.rpm $imgurl
+        yum install -y kernel-c7.rpm
+        yum install -y kernel-headers-c7.rpm
+      else
+        echo -e "${Error} 不支持x86_64以外的系统 !" && exit 1
+      fi
+    fi
 
-			yum install -y kernel-c8.rpm
-			yum install -y kernel-headers-c8.rpm
-			
-			#kernel_version="5.5.5"
-		fi
-	
-	elif [[ "${release}" == "debian" || "${release}" == "ubuntu" ]]; then
-		if [[ "${release}" == "debian" ]]; then
-			if [[ ${version} = "8" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-d8.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EeNpacEol0ZDk5S5ARJ1G7wBI6hF0q-C--Nonxq31lO1iw?download=1
-					wget -N -O linux-headers-d8.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EWmAacwLpdJPhs56m6KhxsEBnnZyqOPJggf-2XXHMfxCtw?download=1
-				
-					dpkg -i linux-image-d8.deb
-					dpkg -i linux-headers-d8.deb
-				
-					#kernel_version="5.5.5"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi
-		
-			elif [[ ${version} = "9" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-d9.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EWrsOGQzcqJOrLzeaqXBh0sBbs9Np7anhs5JULwFAliGBg?download=1
-					wget -N -O linux-headers-d9.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EbAGliMxbpZAtaqvjhcaexkB3owfi2PddFenWUEwMNkiXw?download=1
-				
-					dpkg -i linux-image-d9.deb
-					dpkg -i linux-headers-d9.deb
-				
-					#kernel_version="5.5.5"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi
-			elif [[ ${version} = "10" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-d10.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EX1N_JVwmSJFs4RQ7LqgQzcBurXyK2qUV9EnjYVWqGMs3Q?download=1
-					wget -N -O linux-headers-d10.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EX4OVNaKJFtOhOH8US25-lEBeIr5WOi2rJGI55cTazMhdQ?download=1
-				
-					dpkg -i linux-image-d10.deb
-					dpkg -i linux-headers-d10.deb
-				
-					kernel_version="5.7.7"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi
-			fi
-		elif [[ "${release}" == "ubuntu" ]]; then
-			if [[ ${version} = "16" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-u16.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/ERyDAcgbNptBjPGywtyy4zwB1S14VXAHEraobteVekwcNQ?download=1
-					wget -N -O linux-headers-u16.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/Eeka3lp7WAFOugowSi1F_eYBUXXdnx1dp1rI_aTg9XYtww?download=1
-				
-					dpkg -i linux-image-u16.deb
-					dpkg -i linux-headers-u16.deb
-				
-					#kernel_version="5.4.14"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi
-		
-			elif [[ ${version} = "18" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-u18.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/ERvqNJiLLrpKnLO9z3vCdZIB-GwZr2AKXO7t6dpTbEotmQ?download=1
-					wget -N -O linux-headers-u18.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EWZdQsfxE5lAvL3xTHxS9H4BjYijqpxP-TokL1hLag7PIw?download=1
-				
-					dpkg -i linux-image-u18.deb
-					dpkg -i linux-headers-u18.deb
-				
-					#kernel_version="5.4.14"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi
-			elif [[ ${version} = "19" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-u19.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/ESEgC1nVDmRFmQeJnSWujz4BYy-tnZa64EgX60dIQJjW9Q?download=1
-					wget -N -O linux-headers-u19.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EcsC0aEv8KBHhG3jwRaF8r4BLqvFwBLK5JGy83dfhdV-zQ?download=1
-				
-					dpkg -i linux-image-u19.deb
-					dpkg -i linux-headers-u19.deb
-				
-					#kernel_version="5.4.14"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi
-			elif [[ ${version} = "20" ]]; then
-				if [[ ${bit} = "x86_64" ]]; then
-					wget -N -O linux-image-u20.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/EYqsZWWiss1JvRW5gsfGxckBQhV1IiQgOqzlFmzUJAAdpg?download=1
-					wget -N -O linux-headers-u20.deb https://chinagz2018-my.sharepoint.com/:u:/g/personal/ylx_chinagz2018_onmicrosoft_com/ESJMvds9OwRKlSPEoHYeMPcB4CIbP9rO3hcdGmzAsJqCVQ?download=1
-				
-					dpkg -i linux-image-u20.deb
-					dpkg -i linux-headers-u20.deb
-				
-					#kernel_version="5.4.14"
-				else
-					echo -e "${Error} 还在用32位内核，别再见了 !" && exit 1
-				fi	
-			fi				
-			
-		#else	
-		#	wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u10_amd64.deb
-		#	wget -N --no-check-certificate http://${github}/bbr/debian-ubuntu/linux-headers-${kernel_version}-all.deb
-		#	wget -N --no-check-certificate http://${github}/bbr/debian-ubuntu/${bit}/linux-headers-${kernel_version}.deb
-		#	wget -N --no-check-certificate http://${github}/bbr/debian-ubuntu/${bit}/linux-image-${kernel_version}.deb
-	
-		#	dpkg -i libssl1.0.0_1.0.1t-1+deb8u10_amd64.deb
-		#	dpkg -i linux-headers-${kernel_version}-all.deb
-		#	dpkg -i linux-headers-${kernel_version}.deb
-		#	dpkg -i linux-image-${kernel_version}.deb
-		fi
-	fi
-	
-	cd .. && rm -rf bbr	
-	
-	detele_kernel
-	BBR_grub
-	echo -e "${Tip} ${Red_font_prefix}请检查上面是否有内核信息，无内核千万别重启${Font_color_suffix}"
-	echo -e "${Tip} ${Red_font_prefix}rescue不是正常内核，要排除这个${Font_color_suffix}"
-	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBR${Font_color_suffix}"	
-	stty erase '^H' && read -p "需要重启VPS后，才能开启BBR，是否现在重启 ? [Y/n] :" yn
-	[ -z "${yn}" ] && yn="y"
-	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
-		reboot
-	fi
-	#echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
+  elif [[ "${release}" == "ubuntu" || "${release}" == "debian" ]]; then
+    if [[ ${bit} == "x86_64" ]]; then
+      echo -e "如果下载地址出错，可能当前正在更新，超过半天还是出错请反馈，大陆自行解决污染问题"
+      github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Ubuntu_Kernel' | grep '_latest_bbr_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+      github_ver=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}' | awk -F '[_]' '{print $1}')
+      echo -e "获取的版本号为:${github_ver}"
+      kernel_version=$github_ver
+      detele_kernel_head
+      headurl=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep 'headers' | awk -F '"' '{print $4}')
+      imgurl=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep -v 'headers' | grep -v 'devel' | awk -F '"' '{print $4}')
+      #headurl=https://github.com/ylx2016/kernel/releases/download/$github_tag/linux-headers-${github_ver}_${github_ver}-1_amd64.deb
+      #imgurl=https://github.com/ylx2016/kernel/releases/download/$github_tag/linux-image-${github_ver}_${github_ver}-1_amd64.deb
+      echo -e "正在检查headers下载连接...."
+      checkurl $headurl
+      echo -e "正在检查内核下载连接...."
+      checkurl $imgurl
+      wget -N -O linux-headers-d10.deb $headurl
+      wget -N -O linux-image-d10.deb $imgurl
+      dpkg -i linux-image-d10.deb
+      dpkg -i linux-headers-d10.deb
+    elif [[ ${bit} == "aarch64" ]]; then
+      echo -e "如果下载地址出错，可能当前正在更新，超过半天还是出错请反馈，大陆自行解决污染问题"
+      github_tag=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep 'Ubuntu_Kernel' | grep '_arm64_' | grep '_bbr_' | head -n 1 | awk -F '"' '{print $4}' | awk -F '[/]' '{print $8}')
+      github_ver=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep 'headers' | awk -F '"' '{print $4}' | awk -F '[/]' '{print $9}' | awk -F '[-]' '{print $3}' | awk -F '[_]' '{print $1}')
+      echo -e "获取的版本号为:${github_ver}"
+      kernel_version=$github_ver
+      detele_kernel_head
+      headurl=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep 'headers' | awk -F '"' '{print $4}')
+      imgurl=$(curl -s 'https://api.github.com/repos/ylx2016/kernel/releases' | grep ${github_tag} | grep 'deb' | grep -v 'headers' | grep -v 'devel' | awk -F '"' '{print $4}')
+      #headurl=https://github.com/ylx2016/kernel/releases/download/$github_tag/linux-headers-${github_ver}_${github_ver}-1_amd64.deb
+      #imgurl=https://github.com/ylx2016/kernel/releases/download/$github_tag/linux-image-${github_ver}_${github_ver}-1_amd64.deb
+      echo -e "正在检查headers下载连接...."
+      checkurl $headurl
+      echo -e "正在检查内核下载连接...."
+      checkurl $imgurl
+      wget -N -O linux-headers-d10.deb $headurl
+      wget -N -O linux-image-d10.deb $imgurl
+      dpkg -i linux-image-d10.deb
+      dpkg -i linux-headers-d10.deb
+    else
+      echo -e "${Error} 不支持x86_64及arm64/aarch64以外的系统 !" && exit 1
+    fi
+  fi
+
+  cd .. && rm -rf bbrplusnew
+  detele_kernel
+  BBR_grub
+  echo -e "${Tip} ${Red_font_prefix}请检查上面是否有内核信息，无内核千万别重启${Font_color_suffix}"
+  echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBRplus${Font_color_suffix}"
+  stty erase '^H' && read -p "需要重启VPS后，才能开启BBRplus，是否现在重启 ? [Y/n] :" yn
+  [ -z "${yn}" ] && yn="y"
+  if [[ $yn == [Yy] ]]; then
+    echo -e "${Info} VPS 重启中..."
+    reboot
+  fi
+  #echo -e "${Tip} 内核安装完毕，请参考上面的信息检查是否安装成功及手动调整内核启动顺序"
 }
 
 #安装BBRplus内核 4.14.129
@@ -595,7 +522,6 @@ installbbrplusnew() {
   detele_kernel
   BBR_grub
   echo -e "${Tip} ${Red_font_prefix}请检查上面是否有内核信息，无内核千万别重启${Font_color_suffix}"
-  echo -e "${Tip} ${Red_font_prefix}rescue不是正常内核，要排除这个${Font_color_suffix}"
   echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBRplus${Font_color_suffix}"
   stty erase '^H' && read -p "需要重启VPS后，才能开启BBRplus，是否现在重启 ? [Y/n] :" yn
   [ -z "${yn}" ] && yn="y"
