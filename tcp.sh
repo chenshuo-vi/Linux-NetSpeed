@@ -783,13 +783,13 @@ clear
 echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
 
 ————————————内核管理————————————
- ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR原版内核 - 5.6.15/5.7.7
- ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核 - 4.14.129
- ${Green_font_prefix}3.${Font_color_suffix} 安装 Lotserver(锐速)内核 - 多种
- ${Green_font_prefix}4.${Font_color_suffix} 安装 xanmod版内核 - 5.5.1/5.7.7
- ${Green_font_prefix}5.${Font_color_suffix} 安装 BBR2测试版内核 - 5.4.0
- ${Green_font_prefix}6.${Font_color_suffix} 安装 Zen版内核 - 5.5.2/5.5.10
- ${Green_font_prefix}7.${Font_color_suffix} 安装 BBRplus新版内核 - 最新
+ ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR原版内核
+ ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核
+ ${Green_font_prefix}3.${Font_color_suffix} 安装 Lotserver(锐速)内核
+ ${Green_font_prefix}4.${Font_color_suffix} 安装 xanmod版内核
+ ${Green_font_prefix}5.${Font_color_suffix} 安装 BBR2测试版内核
+ ${Green_font_prefix}6.${Font_color_suffix} 安装 Zen版内核
+ ${Green_font_prefix}7.${Font_color_suffix} 安装 BBRplus新版内核
 ————————————加速管理————————————
  ${Green_font_prefix}11.${Font_color_suffix} 使用BBR+FQ加速
  ${Green_font_prefix}12.${Font_color_suffix} 使用BBR+CAKE加速 
