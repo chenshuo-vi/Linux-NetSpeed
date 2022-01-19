@@ -32,11 +32,6 @@ checkurl() {
   fi
 }
 
-#更新系统到最新版内核
-function up_core(){
-wget -N --no-check-certificate https://raw.githubusercontent.com/chenshuo-dr/Linux-NetSpeed/master/upcore.sh&& chmod +x upcore.sh && ./upcore.sh
-}
-
 #安装BBR内核
 installbbr() {
   kernel_version="5.9.6"
@@ -788,7 +783,6 @@ clear
 echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
 
 ————————————内核管理————————————
- ${Green_font_prefix}0.${Font_color_suffix} 安装 系统最新内核 - 多种
  ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR原版内核 - 5.6.15/5.7.7
  ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核 - 4.14.129
  ${Green_font_prefix}3.${Font_color_suffix} 安装 Lotserver(锐速)内核 - 多种
@@ -829,9 +823,6 @@ echo && echo -e " TCP加速 一键安装管理脚本 卸载内核版本 ${Red_fo
 echo
 read -p " 请输入数字 :" num
 case "$num" in
-	0)
-	up_core
-	;;
 	1)
 	check_sys_bbr
 	;;
